@@ -21,6 +21,7 @@ The Gammatron standard positions are labeled in such fashion:
 ## Previous experiment vs current one
 
 I find very difficult at this time to implement a way for the pivots between Gammatrons to work properly. Please note that I'm not using any external physics library and I'm not a physicist.
+Pivots are supposed to be created when two Gammatrons are so close to each other that they stick together (at least that is what should happen) as one.
 
 This is the second time I try to build this system, last year I used [ammo js](https://github.com/kripken/ammo.js). The result was fascinating (see the gif below) but I had no much control over it, and interactions were randomly crazy I don't know why.
 
