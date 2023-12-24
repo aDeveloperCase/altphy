@@ -33,6 +33,6 @@ It's also intentional the choice of not using any THREE.Group in order to build 
 
 The project has been built with `Node JS` (v20.10.0) using `yarn`, `typescript` and `vite`.
 
-1- cd into the project
-2- run `yarn` to install dependencies
+1- cd into the project  
+2- run `yarn` to install dependencies  
 3- run `yarn dev` to run the development environment at `http://localhost:5173/`
