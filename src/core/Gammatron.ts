@@ -124,7 +124,7 @@ export class Gammatron extends WorldItem {
     const otherSpeedUuid = `interaction-gamma-gamma-speed=${other.uuid}<=>${this.uuid}`;
     const otherTorqueUuid = `interaction-gamma-gamma-torque=${other.uuid}<=>${this.uuid}`;
 
-    if (!isPivot && distance.lessThanOrEqualTo(Gammatron.minPivotDistance)) {
+    if (!isPivot && distance.lessThanOrEqualTo(Gammatron.minPivotDistance) && this.charge !== other.charge) {
       const pivot = new Pivot(this, other);
       this.pivot = pivot;
       other.pivot = pivot;
@@ -157,6 +157,10 @@ export class Gammatron extends WorldItem {
     // here we get the inverse: the energy is at its minimum when the distance is the greatest, the energy is at its maximum when distance is zero.
     const distanceFieldComponentMaxToMin = Gammatron.maxFieldEnergy.sub(distanceFieldComponentMinToMax); // from max to min
     field.magnitude = distanceFieldComponentMaxToMin;
+
+    if (this.charge === other.charge) {
+      field.magnitude = field.magnitude.negated();
+    }
 
     // The field force should be split into speed (movement) and torque in some other way..
     // Instead the speed is currently copied from the field force.

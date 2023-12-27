@@ -39,11 +39,11 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // // alpha4.position.set(0, -2, 0);
 
 const alpha1 = AlphaFactory.generate(world, { [GPos.EAST]: GCharge.POS, [GPos.UP]: GCharge.NEG }, "left");
-const alpha2 = AlphaFactory.generate(world, { [GPos.WEST]: GCharge.NEG, [GPos.UP]: GCharge.POS }, "right");
+const alpha2 = AlphaFactory.generate(world, { [GPos.WEST]: GCharge.POS, [GPos.UP]: GCharge.POS }, "right");
 
 // alpha1.speeds.addOrUpdate(new Force('', 'constant', new THREE.Vector3(1, 0, 0).normalize(), new BigN(0.05)))
-alpha1.position.set(-2, 0, 0);
-alpha2.position.set(2, 0, 0);
+alpha1.position.set(-1.5, 0, 0);
+alpha2.position.set(1.5, 0, 0);
 
 // Testing ForceTransition..
 // const f1 = new Force("f1", "test", new THREE.Vector3(1, 0, 0).normalize(), new BigN(2));
