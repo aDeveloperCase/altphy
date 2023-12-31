@@ -30,7 +30,7 @@ export class Gammatron extends WorldItem {
   distance: BigNumber = new BigN(1);
 
   torqueTransition: ForceTransition | null = null;
-  speedTransition: ForceTransition | null = null;
+  velocityTransition: ForceTransition | null = null;
 
   constructor(world: World, alphatron: Alphatron, charge: GCharge) {
     super(world, Gammatron.geometry, charge === GCharge.POS ? Gammatron.materialPos : Gammatron.materialNeg);
@@ -80,7 +80,7 @@ export class Gammatron extends WorldItem {
     speed.direction = getDirectionBetweenTwoPoints(other.position, this.position);
     speed.magnitude = new BigN(0.05); // this magic number should be computed in different way..
 
-    this.alphatron.speeds.addOrUpdate(speed);
+    this.alphatron.velocities.addOrUpdate(speed);
 
     const posComponent = new Force();
     posComponent.direction = getDirectionBetweenTwoPoints(this.alphatron.position, this.position);
@@ -118,10 +118,10 @@ export class Gammatron extends WorldItem {
       return;
     }
 
-    const speedUuid = `interaction-gamma-gamma-speed=${this.uuid}<=>${other.uuid}`;
+    const velocityUuid = `interaction-gamma-gamma-velocity=${this.uuid}<=>${other.uuid}`;
     const torqueUuid = `interaction-gamma-gamma-torque=${this.uuid}<=>${other.uuid}`;
 
-    const otherSpeedUuid = `interaction-gamma-gamma-speed=${other.uuid}<=>${this.uuid}`;
+    const otherVelocityUuid = `interaction-gamma-gamma-velocity=${other.uuid}<=>${this.uuid}`;
     const otherTorqueUuid = `interaction-gamma-gamma-torque=${other.uuid}<=>${this.uuid}`;
 
     if (!isPivot && distance.lessThanOrEqualTo(Gammatron.minPivotDistance) && this.charge !== other.charge) {
@@ -129,10 +129,10 @@ export class Gammatron extends WorldItem {
       this.pivot = pivot;
       other.pivot = pivot;
 
-      this.alphatron.speeds.remove(speedUuid);
+      this.alphatron.velocities.remove(velocityUuid);
       this.alphatron.torques.remove(torqueUuid);
 
-      other.alphatron.speeds.remove(otherSpeedUuid);
+      other.alphatron.velocities.remove(otherVelocityUuid);
       other.alphatron.torques.remove(otherTorqueUuid);
 
       return;
@@ -162,10 +162,10 @@ export class Gammatron extends WorldItem {
       field.magnitude = field.magnitude.negated();
     }
 
-    // The field force should be split into speed (movement) and torque in some other way..
-    // Instead the speed is currently copied from the field force.
-    const speed = new Force(speedUuid, "GammaGammaSpeed");
-    speed.copy(field);
+    // The field force should be split into velocity and torque in some other way..
+    // Instead the velocity is currently copied from the field force.
+    const velocity = new Force(velocityUuid, "GammaGammaVelocity");
+    velocity.copy(field);
 
     // the position force never changes.. it could be stored somewhere else..?
     const posComponent = new Force(`alpha-gamma-position=${other.uuid}<=>${this.uuid}`, "AlphaGammaPosition");
@@ -186,10 +186,10 @@ export class Gammatron extends WorldItem {
     // in opposite directions (when two gammas are too close to each other and we are not taking any solution to prevent the oscillations).
     // Maybe this indicator could be exploited somehow..?
     // const oldTorque = this.alphatron.torques.getBy(torqueUuid);
-    // const oldSpeed = this.alphatron.speeds.getBy(speedUuid);
+    // const oldVelocity = this.alphatron.velocities.getBy(velocityUuid);
     // const directionChangeAngle = new BigN(torque.direction.angleTo(oldTorque?.direction));
 
-    this.alphatron.speeds.addOrUpdate(speed);
+    this.alphatron.velocities.addOrUpdate(velocity);
     this.alphatron.torques.addOrUpdate(torque);
 
     field.buildHelper(this.world, 0xffff00, this.position, new BigN(100));

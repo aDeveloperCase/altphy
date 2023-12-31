@@ -11,7 +11,7 @@ export class Alphatron extends WorldItem {
   protected static geometry = new THREE.SphereGeometry(Alphatron.radius.toNumber(), 25, 25);
   protected static material = new THREE.MeshBasicMaterial({ color: 0x6666ff, wireframe: true });
 
-  speeds: ForceList = new ForceList();
+  velocities: ForceList = new ForceList();
   torques: ForceList = new ForceList();
 
   prevPos: THREE.Vector3 = new THREE.Vector3();
@@ -24,25 +24,25 @@ export class Alphatron extends WorldItem {
   }
 
   update(): void {
-    this.speeds.refresh();
+    this.velocities.refresh();
     this.torques.refresh();
 
     const torqueNet = this.torques.getNet();
-    const speedNet = this.speeds.getNet();
-    speedNet.magnitude = speedNet.magnitude.mul(0.2);
+    const velocityNet = this.velocities.getNet();
+    velocityNet.magnitude = velocityNet.magnitude.mul(0.2);
 
     this.prevRot.copy(this.rotation);
     this.rotateOnWorldAxis(torqueNet.direction, torqueNet.magnitude.toNumber());
     this.latestRot.copy(this.rotation);
 
     this.prevPos.copy(this.position);
-    this.position.add(speedNet.direction.clone().multiplyScalar(speedNet.magnitude.toNumber()));
+    this.position.add(velocityNet.direction.clone().multiplyScalar(velocityNet.magnitude.toNumber()));
     this.latestPos.copy(this.position);
 
     // This friction numbers shuold be computed in a different way..
     // Maybe by introducing the mass property to the bodies.
-    this.speeds.applyFriction(new BigN(0.98), "AlphaCollision");
-    this.speeds.applyFriction(new BigN(0.9), "GammaCollision");
+    this.velocities.applyFriction(new BigN(0.98), "AlphaCollision");
+    this.velocities.applyFriction(new BigN(0.9), "GammaCollision");
     this.torques.applyFriction(new BigN(0.9), "GammaCollisionTorque");
   }
 
@@ -54,11 +54,11 @@ export class Alphatron extends WorldItem {
     this.position.copy(this.prevPos);
     other.position.copy(other.prevPos);
 
-    const speed = new Force(`alpha-alpha-collision=${this.uuid}<=>${other.uuid}`, "AlphaCollision");
+    const velocity = new Force(`alpha-alpha-collision=${this.uuid}<=>${other.uuid}`, "AlphaCollision");
 
-    speed.direction = getDirectionBetweenTwoPoints(this.position, other.position);
-    speed.magnitude = new BigN(0.1).negated(); // This magic number should be computed in a different way..
+    velocity.direction = getDirectionBetweenTwoPoints(this.position, other.position);
+    velocity.magnitude = new BigN(0.1).negated(); // This magic number should be computed in a different way..
 
-    this.speeds.addOrUpdate(speed);
+    this.velocities.addOrUpdate(velocity);
   }
 }
